@@ -1,10 +1,18 @@
 all: flex bison gcc
 
+winall:winflex winbison gcc
+
 flex:
-	flex hello.lex
+	flex shell.lex
 
 bison:
-	bison -dy hello.y
+	bison -dy shell.y
 
 gcc:
-	gcc lex.yy.c y.tab.c -o main.exe
+	gcc lex.yy.c y.tab.c -o shell
+
+winflex:
+	win_flex shell.lex
+
+winbison:
+	win_bison -dy shell.y
