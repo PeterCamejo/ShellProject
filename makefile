@@ -18,4 +18,4 @@ winbison:
 	win_bison -dy shell.y
 
 clean:
-	rm shell
+	rm shell lex.yy.c y.tab.c y.tab.h

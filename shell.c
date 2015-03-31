@@ -48,7 +48,7 @@ int main(){
 				};*/
 				printf("OK");
 			case EXIT:
-				printf("Exiting...\n");
+				printf("\t Exiting...\n");
 				exit(0);
 			case SYSERR:
 				printf("Nonvalid command");
