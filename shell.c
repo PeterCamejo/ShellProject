@@ -1,4 +1,6 @@
 #include "shell.h"
+#include <stdlib.h>
+
 
 /* do_it() runs built in commands */
 /*
@@ -14,26 +16,43 @@ void do_it(){
 }
 */
 
+void prompt(){
+	printf("$");
+	return;
+}
+
+
+int getCommand(){
+	if(yyparse()){  	//If yyparse is anything but '0' , there is a parsing error.
+		printf("Parsing Error Encountered");
+	}
+	return 0;
+}
+
+
 int main(){
 	/* initilization */
 	//shell_int();
 
 	/* Shell Loop */
 	while(1){	
-		//prompt();
-		switch(CMD = getCommand()){
+		prompt();
+		getCommand();
+		switch(CMD /*= getCommand()*/){
 			case OK: 
-				if(builtin){
+				/*if(builtin){
 					do_it();
 				}
 				else{
 					execute();
-				};
-			case BYE:
-				exit();  //Couldn't we just break?
+				};*/
+				printf("OK");
+			case EXIT:
+				printf("Exiting...\n");
+				exit(0);
 			case SYSERR:
-				printErr("Nonvalid command");
-				recover();
+				printf("Nonvalid command");
+				//	recover();
 		}
 
 	}

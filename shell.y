@@ -4,10 +4,20 @@
 
 void yyerror ( const char *str) {fprintf ( stderr , "error: %s\n" , str);}
 int yywrap(){return 1;}
-main(){yyparse();}
+/* main(){yyparse();}  // Can't have two main()*/
 %}
 
-%token NUMBER HELLO BYE STATE
+%union
+{
+	int intval;
+	char *strval;
+	float floatval;
+}
+
+%token NUMBER HELLO STATE BYE
+%token <strval> COMMAND
+
+
 %%
 
 commands: /*empty */
@@ -17,8 +27,8 @@ command:
 		hello_case|bye_case|state_number_case;
 
 hello_case:
-		HELLO 	{printf("\t hello back!! \n");};
+		HELLO 	{printf("\t hello back!! \n"); return 0;};
 bye_case:
-		BYE 	{printf("\t bye back !! \n");};
+		BYE 	{CMD = EXIT; return 0;};
 state_number_case:
-		STATE NUMBER 	{printf("\t state with number recieved \n");};
+		STATE NUMBER 	{printf("\t state with number recieved \n"); return 0;};
