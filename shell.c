@@ -3,18 +3,26 @@
 
 
 /* do_it() runs built in commands */
-/*
+
 void do_it(){
 	switch(command){
-		case CDHome:
-		case CD : 
-		case ALIAS
+		//TODO: Add functionality after fixing Flex/Bison Error;
+		case CDX :  // CD with a directory specified.
+			printf("CD w/ filepath recognized. Filepath is : %s\n", cd_filepath);
+			CMD = 0;
+			break;
+		case CDH: 	// CD with no directory specified.
+			chdir(getenv("HOME"));
+			printf("CD HOME recognized\n"); //TODO: Remove this after testing.
+			CMD = 0;
+			break;
+		/*case ALIASHOME
 		case UNALIAS
 		case SETENV
-		case PRINTENV
+		case PRINTENV*/
 	}
 }
-*/
+
 
 void prompt(){
 	printf("$");
@@ -24,7 +32,7 @@ void prompt(){
 
 int getCommand(){
 	if(yyparse()){  	//If yyparse is anything but '0' , there is a parsing error.
-		printf("Parsing Error Encountered");
+		printf("Parsing Error Encountered \n");
 	}
 	return 0;
 }
@@ -38,15 +46,16 @@ int main(){
 	while(1){	
 		prompt();
 		getCommand();
-		switch(CMD /*= getCommand()*/){
+		switch(CMD){
 			case OK: 
-				/*if(builtin){
+				if(builtin){
 					do_it();
 				}
-				else{
+				/*else{
 					execute();
 				};*/
-				printf("OK");
+				
+				break;
 			case EXIT:
 				printf("\t Exiting...\n");
 				exit(0);
