@@ -1,6 +1,7 @@
 * Working Features:
-bye
-cd (home)
+
+1)bye
+2)cd (home)
 
 
 *	Current Bugs:
