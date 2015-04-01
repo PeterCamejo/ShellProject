@@ -8,6 +8,7 @@
 #define CDH 1
 #define CDX 2
 
+
 /* externals */
 int builtin;  //Determines if command is built in or not
 int command;  //Current command.

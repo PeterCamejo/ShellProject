@@ -4,6 +4,12 @@
 
 /* do_it() runs built in commands */
 
+void changedir(char * directory){
+	if(chdir(directory) == -1){
+		printf("%s is not a directory\n" , directory);
+	}
+	return;
+}
 void do_it(){
 	switch(command){
 		//TODO: Add functionality after fixing Flex/Bison Error;
@@ -25,7 +31,7 @@ void do_it(){
 
 
 void prompt(){
-	printf("$");
+	printf("SHELL:%s$ " , getenv("PWD"));
 	return;
 }
 

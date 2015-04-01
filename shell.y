@@ -34,4 +34,4 @@ state_number_case:
 cd_case: 
 		CD				{CMD = OK; builtin = 1; command = CDH;return 0;};
 		|FILEPATH 		{CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
-			
+
