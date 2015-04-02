@@ -14,7 +14,7 @@ int yywrap(){return 1;}
 	float floatval;
 }
 
-%token NUMBER HELLO STATE BYE CD FILEPATH SPACE
+%token NUMBER HELLO STATE BYE CD FILEPATH SPACE NEWLINE
 %token <strval> COMMAND
 
 
@@ -31,7 +31,7 @@ bye_case:
 		BYE 			{CMD = EXIT; return 0;};
 state_number_case:
 		STATE NUMBER 	{printf("\t state with number recieved \n"); return 0;};
-cd_case: 
-		CD				{CMD = OK; builtin = 1; command = CDH;return 0;};
-		|FILEPATH 		{CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
+cd_case: CD
+		|cd_case FILEPATH 	{CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
+		|cd_case NEWLINE	{CMD = OK; builtin = 1; command = CDH;return 0;};
 

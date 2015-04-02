@@ -1,10 +1,13 @@
 * Working Features:
 
 1)bye
-2)cd (home)
 
+* Features that require further testing:
+
+(I'm pretty certain these work, but currently have no real way to test for sure yet (ls command needed). cd w/ filepath correctly outputs error if the given filepath DNE  )
+
+1) cd w/o filepath 2) cd w/ filepath
 
 *	Current Bugs:
 
-When 'cd' with a filepath specified is input, bison reads it as 'cd' by itself AND as 'cd'
-with a filepath specified when it should only recognize 'cd' with a filepath recognized.
+yyparse returns parsing error for every command despite being able to correctly identify each command.

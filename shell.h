@@ -13,4 +13,4 @@
 int builtin;  //Determines if command is built in or not
 int command;  //Current command.
 int CMD; 	// Determines if the command gained from getCommand() is OK, SYSERR, or BYE
-char * cd_filepath ;
+char * cd_filepath; //Filepath that cd is changing into.

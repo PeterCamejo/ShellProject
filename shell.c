@@ -2,24 +2,26 @@
 #include <stdlib.h>
 
 
-/* do_it() runs built in commands */
 
+/* changes directory when CD+filepath command recieved */
 void changedir(char * directory){
 	if(chdir(directory) == -1){
-		printf("%s is not a directory\n" , directory);
+		printf("\t %s is not a directory\n" , directory);
 	}
 	return;
 }
+
+/* do_it() runs built in commands */
 void do_it(){
 	switch(command){
-		//TODO: Add functionality after fixing Flex/Bison Error;
 		case CDX :  // CD with a directory specified.
-			printf("CD w/ filepath recognized. Filepath is : %s\n", cd_filepath);
+			changedir(cd_filepath);
+			printf("\t CD w/ filepath recognized. Filepath is : %s\n", cd_filepath);
 			CMD = 0;
 			break;
 		case CDH: 	// CD with no directory specified.
 			chdir(getenv("HOME"));
-			printf("CD HOME recognized\n"); //TODO: Remove this after testing.
+			printf("\t CD HOME recognized\n"); //TODO: Remove this after testing.
 			CMD = 0;
 			break;
 		/*case ALIASHOME
@@ -29,7 +31,7 @@ void do_it(){
 	}
 }
 
-
+/* Prompts shell input each line */
 void prompt(){
 	printf("SHELL:%s$ " , getenv("PWD"));
 	return;

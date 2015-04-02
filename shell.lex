@@ -16,7 +16,7 @@ cd				return CD;
 hello			return HELLO;
 bye				return BYE;
 on|off			return STATE;
-\n 				/*ignore end of line */
+\n 				return NEWLINE;
 [:space:]		return SPACE;
 {FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;}
 
