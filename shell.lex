@@ -12,11 +12,11 @@ FILEPATH	[A-Za-z0-9_/\-]
 
 
 cd				return CD;
+cd\n 			return CDHOME;
 [0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
-on|off			return STATE;
-\n 				return NEWLINE;
+\n 				/*ignore end of line*/
 [:space:]		return SPACE;
 {FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;}
 

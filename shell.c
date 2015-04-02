@@ -16,12 +16,10 @@ void do_it(){
 	switch(command){
 		case CDX :  // CD with a directory specified.
 			changedir(cd_filepath);
-			printf("\t CD w/ filepath recognized. Filepath is : %s\n", cd_filepath);
 			CMD = 0;
 			break;
 		case CDH: 	// CD with no directory specified.
 			chdir(getenv("HOME"));
-			printf("\t CD HOME recognized\n"); //TODO: Remove this after testing.
 			CMD = 0;
 			break;
 		/*case ALIASHOME
@@ -33,7 +31,8 @@ void do_it(){
 
 /* Prompts shell input each line */
 void prompt(){
-	printf("SHELL:%s$ " , getenv("PWD"));
+	char *curdir = get_current_dir_name(); //current working directory
+	printf("SHELL:%s$ " , curdir);
 	return;
 }
 
