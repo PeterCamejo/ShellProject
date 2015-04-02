@@ -1,13 +1,11 @@
 * Working Features:
 
-1)bye
+(1) bye (2) cd w/o filepath (3) cd w/ filepath 
 
 * Features that require further testing:
 
-(I'm pretty certain these work, but currently have no real way to test for sure yet (ls command needed). cd w/ filepath correctly outputs error if the given filepath DNE  )
-
-1) cd w/o filepath 2) cd w/ filepath
+None
 
 *	Current Bugs:
 
-yyparse returns parsing error for every command despite being able to correctly identify each command.
+After "cd w/ filepath" command, prompt shifts right by one space.Does not affect functionality.
