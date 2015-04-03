@@ -11,9 +11,14 @@ void changedir(char * directory){
 	return;
 }
 
+
 /* do_it() runs built in commands */
 void do_it(){
 	switch(command){
+		/* environ and i for use in printenv (Cant declare variables inside cases) */
+		extern char ** environ;
+		int i = 0;
+
 		case CDX :  // CD with a directory specified.
 			changedir(cd_filepath);
 			CMD = 0;
@@ -22,10 +27,22 @@ void do_it(){
 			chdir(getenv("HOME"));
 			CMD = 0;
 			break;
+		case SETENV:
+			if(setenv( envvar , envvar_value, 1) == -1){
+				printf("\t Error: Failed to set %s as %s\n", envvar , envvar_value);
+			}
+			CMD = 0;
+			break;
+		case PRINTENV:
+			while(environ[i]){
+				printf("%s\n" , environ[i++]);
+			}
+			CMD = 0;
+			break;
 		/*case ALIASHOME
 		case UNALIAS
-		case SETENV
-		case PRINTENV*/
+		
+		*/
 	}
 }
 

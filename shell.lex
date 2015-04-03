@@ -10,9 +10,10 @@ FILEPATH	[A-Za-z0-9_/\-]
 
 %%
 
-
+printenv		return PRINT_ENV;
 cd				return CD;
 cd\n 			return CDHOME;
+setenv			return SET_ENV;
 [0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
