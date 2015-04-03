@@ -1,10 +1,10 @@
 * Working Features:
 
-(1) bye (2) cd w/o filepath (3) cd w/ filepath 
+(1) bye (2) cd w/o filepath (3) cd w/ filepath (4) setenv (5) printenv
 
 * Features that require further testing:
 
-None
+Maybe setenv and printenv, but I believe they are fine.
 
 *	Current Bugs:
 
