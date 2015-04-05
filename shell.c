@@ -1,5 +1,7 @@
 #include "shell.h"
 #include <stdlib.h>
+#include <stdio.h>
+
 void shell_init(){
 	return;
 }
