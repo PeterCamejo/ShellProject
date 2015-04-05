@@ -15,7 +15,7 @@ int yywrap(){return 1;}
 	float floatval;
 }
 
-%token NUMBER HELLO BYE CD FILEPATH SPACE CDHOME PRINT_ENV ALIAS UN_ALIAS LIST_ALIAS NAME COMMAND
+%token NUMBER HELLO BYE CD FILEPATH SPACE CDHOME PRINT_ENV ALIAS UN_ALIAS LIST_ALIAS WORD COMMAND
 %token <strval> SET_ENV
 
 %type <strval> setenv_case;
@@ -34,7 +34,7 @@ bye_case:
 		BYE 			{CMD = EXIT; return 0;};
 cd_case: 
 		CD FILEPATH 	{CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;}
-		|CD NAME  {CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
+		|CD WORD  {CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
 cd_home_case:
 		CDHOME			{CMD = OK; builtin = 1; command = CDH; return 0;};
 setenv_case:
@@ -42,9 +42,9 @@ setenv_case:
 printenv_case:
 		PRINT_ENV 		{CMD = OK; builtin = 1; command = PRINTENV; return 0;};
 add_alias_case:
-		ALIAS NAME COMMAND      {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
+		ALIAS WORD COMMAND      {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
 
 list_alias_case:
 		LIST_ALIAS 		{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
-		UN_ALIAS NAME 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
+		UN_ALIAS WORD 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };

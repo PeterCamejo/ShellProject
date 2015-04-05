@@ -7,7 +7,7 @@
 %}
 
 FILEPATH	[A-Za-z0-9_/\-]
-NAME		[A-Za-z]
+WORD		[A-Za-z0-9]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 %%
@@ -24,7 +24,7 @@ hello			return HELLO;
 bye				return BYE;
 \n 				/*ignore end of line*/
 [:space:]		return SPACE;
-{NAME}+			{yylval.strval = strdup(yytext); return NAME;};
+{WORD}+			{yylval.strval = strdup(yytext); return WORD;};
 {FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;};
 {COMMAND}		{yylval.strval = strdup(yytext); return COMMAND;};
 
