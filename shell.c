@@ -22,15 +22,15 @@ void changedir(char * directory){
 int addalias(char * alias_name , char * alias_command){
 	int i = 0;
 	while(aliastable[i][0] != NULL){
-		if(alias_name == aliastable[i][0]){
+		if(strcmp(alias_name , aliastable[i][0]) == 0){
 			printf("\t Error: That name is already assigned\n");
 			return 1;
 		}
-		if(alias_command == aliastable[i][1]){
+		if(strcmp(alias_command,aliastable[i][1]) == 0){
 			printf("\t Error: That command is already assigned\n");
 			return 1;
 		}
-		printf("\t %s does not equal %s\n", alias_name , aliastable[i][0]);
+
 		i++;
 	}
 	
@@ -45,6 +45,23 @@ int addalias(char * alias_name , char * alias_command){
 	return 0;
 }
 
+int unalias(char * alias_name){
+	int i = 0;
+	while(aliastable[i][0]!=NULL){
+		if(strcmp(alias_name , aliastable[i][0]) == 0){
+			*aliastable[i][0] = 0;
+			*aliastable[i][1] = 0;
+			return 0;
+		}
+	
+
+		i++;
+	}
+
+	printf("\t Error: %s alias not found.\n" , alias_name);
+	return 1;
+		
+}
 
 /* do_it() runs built in commands */
 void do_it(){
@@ -79,8 +96,6 @@ void do_it(){
 			printf("\t Hello back!\n");
 			break;
 		case ADDALIAS:
-			printf("\t Name of Alias:\t%s\n", alias_name);
-			printf("\t Alias command:\t%s\n", alias_command);
 			addalias(alias_name , alias_command);
 			break;
 		

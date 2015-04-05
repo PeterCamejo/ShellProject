@@ -27,7 +27,7 @@ commands: /*empty */
 		| commands command;
 
 command:
-		hello_case|bye_case|cd_case|cd_home_case|setenv_case|printenv_case|list_alias_case|add_alias_case;
+		hello_case|bye_case|cd_case|cd_home_case|setenv_case|printenv_case|list_alias_case|add_alias_case|unalias_case;
 hello_case:
 		HELLO 			{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
 bye_case:
@@ -46,3 +46,5 @@ add_alias_case:
 
 list_alias_case:
 		LIST_ALIAS 		{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
+unalias_case:
+		UN_ALIAS NAME 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
