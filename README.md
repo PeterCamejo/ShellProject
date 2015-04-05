@@ -1,10 +1,10 @@
 * Working Features:
 
-(1) bye (2) cd w/o filepath (3) cd w/ filepath (4) setenv (5) printenv
+(1) bye (2) cd w/o filepath (3) cd w/ filepath (4) setenv (5) printenv (6) alias printing (7) alias adding
 
 * Features that require further testing:
 
-Maybe setenv and printenv, but I believe they are fine.
+(1) Aliases in general should be thoroughly tested.
 
 *	Current Bugs:
 
