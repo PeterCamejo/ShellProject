@@ -1,13 +1,7 @@
 #include "shell.h"
 #include <stdlib.h>
 void shell_init(){
-	aliastable[0][0] = "ALIAS1 "; // Test code for LISTALIAS
-	aliastable[0][1] = "DEF1";
-	aliastable[1][0] = "ALIAS2";
-	aliastable[1][1] = "DEF2";
-	aliastable[2][0] = "ALIAS3";
-	aliastable[2][1] = "DEF3";
-
+	return;
 }
 
 /* changes directory when CD+filepath command recieved */
@@ -47,19 +41,41 @@ int addalias(char * alias_name , char * alias_command){
 
 int unalias(char * alias_name){
 	int i = 0;
+	int found = 0;
+	
 	while(aliastable[i][0]!=NULL){
+
 		if(strcmp(alias_name , aliastable[i][0]) == 0){
-			*aliastable[i][0] = 0;
-			*aliastable[i][1] = 0;
-			return 0;
+
+			aliastable[i][0] = 0;
+			aliastable[i][1] = 0;
+			i++;
+			found = 1;
+	
+			break;
 		}
 	
 
 		i++;
 	}
+	while(aliastable[i][0]!=NULL){
+		aliastable[i-1][0] = aliastable[i][0];
+		aliastable[i-1][1] = aliastable[i][1];
+		
+		if(aliastable[i+1][0] == 0){
+	
+			aliastable[i][0] = 0;
+			aliastable[i][1] = 0;
+			
+			return 0;
+		}
+		i++;
+	}
 
-	printf("\t Error: %s alias not found.\n" , alias_name);
-	return 1;
+	if(found == 0){
+		printf("\t Error: %s alias not found.\n" , alias_name);
+		return 1;
+	}
 		
 }
 
@@ -97,6 +113,9 @@ void do_it(){
 			break;
 		case ADDALIAS:
 			addalias(alias_name , alias_command);
+			break;
+		case UNALIAS:
+			unalias(alias_name);
 			break;
 		
 	}
