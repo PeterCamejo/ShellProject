@@ -10,3 +10,6 @@
 
 After "cd w/ filepath" command, prompt shifts right by one space.Does not affect functionality.
 This also happens with addalias.
+
+Printenv command before setenv causes segmentation fault.
+

@@ -116,6 +116,70 @@ void do_it(){
 	}
 }
 
+/*
+void execute(){
+//Check to see if command is accessible and executable
+	if(! executable()){
+		printf("\t Command not Found\n"); //not accessible
+		return;
+	}
+
+//Check IO file existence in the event of io-reduction.
+	if( check_in_file() == SYSERR){
+		printf("Can't read from: %s, srcf"); //not accessible
+		return;
+	}
+	if( check_out_file() == SYSERR){
+		printf("Can't write to: %s, destf"); //not accessible
+		return;
+	}
+
+	//Build Up the PipeLine
+	for(c=0; c < currcmd; c++){
+		//Prepare arguments
+		if(..){
+			//Argv
+		}
+		else{
+			//the case of a command with no arguments
+		}
+
+		switch( pid = fork() ) { //Fork process return twice
+
+			case 0:
+				switch(WhichComm(c)){
+					case FIRST:
+					if( close(1) = SYSCALLER) {...}
+					if( dup(comtab[c].outfd) != 1) {...}
+					if( close(comtab[c+1].infd) == SYSCALLER){...}
+					in_redir();
+					break;
+
+					case LAST:
+						if( close(0) == SYSCALLER){...}
+						if( dup(comtab[c].infd) != 0) {...}
+						out_redir();
+						break;
+
+					case THE_ONLY_ONE:
+						in_redir();
+						out_redir();
+						break;
+
+					default:
+					if( dup2(comtab[c].outfd,1) == SYSCALLER) {...}
+					if( dup2(comtab[c].infd, 0) == SYSCALLER) {...}
+					if( close(comtab[c+1].infd) == SYSCALLER) {...}
+					break;
+				}
+		}
+	}
+}
+
+
+
+*/
+
 /* Prompts shell input each line */
 void prompt(){
 	char *curdir = get_current_dir_name(); //current working directory
@@ -144,9 +208,9 @@ int main(){
 				if(builtin){
 					do_it();
 				}
-				/*else{
-					execute();
-				};*/
+				else{
+					//execute();
+				};
 				
 				break;
 			case EXIT:
