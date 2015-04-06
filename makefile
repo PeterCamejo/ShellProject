@@ -9,7 +9,7 @@ bison:
 	bison -dy shell.y
 
 gcc:
-	gcc lex.yy.c y.tab.c shell.c -o shell
+	gcc -std=c99 lex.yy.c y.tab.c shell.c -o shell
 
 winflex:
 	win_flex shell.lex

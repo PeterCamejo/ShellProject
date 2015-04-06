@@ -7,6 +7,8 @@ void yyerror ( const char *str) {fprintf ( stderr , "error: %s\n" , str);}
 int yywrap(){return 1;}
 
 int processAlias(char * alias){
+	char * alias_cmd;
+	int k = 0;
 
 	if(aliastable[0][0] == 0){
 		return 1;
@@ -16,7 +18,26 @@ int processAlias(char * alias){
 	while(aliastable[i][0] != 0){
 		if(strcmp(alias , aliastable[i][0]) == 0){
 			
-			
+			//Remove quotes from alias command
+			alias_cmd = aliastable[i][1];
+			for(int j = 0; j < strlen(alias_cmd) ; j++){
+				if(alias_cmd[i] == '\\'){
+					alias_cmd[k++] = alias_cmd[j++];
+					alias_cmd[k++] = alias_cmd[j];
+
+					if(alias_cmd[j] == '\0'){
+						break;
+					}
+				}
+				else if (alias_cmd[j] != '"'){
+					alias_cmd[k++] = alias_cmd[j];
+				}
+			}
+			alias_cmd[k] = '\0';
+
+
+			//Input alias command through flex/bison again.
+			printf("\t Alias recognized : %s\n\t The command is %s\n" , aliastable[i][0] , alias_cmd);
 			return 0;
 		}
 		i++;
