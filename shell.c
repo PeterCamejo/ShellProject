@@ -14,6 +14,7 @@ void changedir(char * directory){
 	return;
 }
 
+
 /* adds an alias to the aliastable */
 int addalias(char * alias_name , char * alias_command){
 	int i = 0;
@@ -46,29 +47,21 @@ int unalias(char * alias_name){
 	int found = 0;
 	
 	while(aliastable[i][0]!=NULL){
-
 		if(strcmp(alias_name , aliastable[i][0]) == 0){
-
 			aliastable[i][0] = 0;
 			aliastable[i][1] = 0;
 			i++;
 			found = 1;
-	
 			break;
 		}
-	
-
 		i++;
 	}
 	while(aliastable[i][0]!=NULL){
 		aliastable[i-1][0] = aliastable[i][0];
-		aliastable[i-1][1] = aliastable[i][1];
-		
-		if(aliastable[i+1][0] == 0){
-	
+		aliastable[i-1][1] = aliastable[i][1];		
+		if(aliastable[i+1][0] == 0){	
 			aliastable[i][0] = 0;
 			aliastable[i][1] = 0;
-			
 			return 0;
 		}
 		i++;
@@ -144,6 +137,7 @@ int main(){
 	/* Shell Loop */
 	while(1){	
 		prompt();
+		CMD = 0;
 		getCommand();
 		switch(CMD){
 			case OK: 
@@ -159,7 +153,7 @@ int main(){
 				printf("\t Exiting...\n");
 				exit(0);
 			case SYSERR:
-				printf("Nonvalid command");
+				printf("\t Nonvalid command\n");
 				//	recover();
 		}
 

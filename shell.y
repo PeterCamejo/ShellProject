@@ -6,6 +6,25 @@
 void yyerror ( const char *str) {fprintf ( stderr , "error: %s\n" , str);}
 int yywrap(){return 1;}
 
+int processAlias(char * alias){
+
+	if(aliastable[0][0] == 0){
+		return 1;
+	}
+
+	int i = 0;
+	while(aliastable[i][0] != 0){
+		if(strcmp(alias , aliastable[i][0]) == 0){
+			
+			
+			return 0;
+		}
+		i++;
+	}
+	return 1;
+}
+
+
 %}
 
 %union
@@ -27,7 +46,7 @@ commands: /*empty */
 		| commands command;
 
 command:
-		hello_case|bye_case|cd_case|cd_home_case|setenv_case|printenv_case|list_alias_case|add_alias_case|unalias_case;
+		hello_case|bye_case|cd_case|cd_home_case|setenv_case|printenv_case|list_alias_case|add_alias_case|unalias_case|word_case;
 hello_case:
 		HELLO 			{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
 bye_case:
@@ -48,3 +67,5 @@ list_alias_case:
 		LIST_ALIAS 		{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
 		UN_ALIAS WORD 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
+word_case:
+		WORD			{if(processAlias(yylval.strval) == 1){ CMD = SYSERR;};return 0;};

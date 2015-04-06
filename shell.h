@@ -27,3 +27,7 @@ char * envvar_value; 				// Value to set envvar to.
 char * aliastable[MAX_ALIASES][2];	//50 possible aliases with 1 definition each.
 char * alias_name;					
 char * alias_command;
+
+
+/* main function constructors */
+int processAlias(char * alias);
