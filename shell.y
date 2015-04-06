@@ -8,6 +8,7 @@ int yywrap(){return 1;}
 
 int processAlias(char * alias){
 	char * alias_cmd;
+	alias_caught = 0;
 	int k = 0;
 
 	if(aliastable[0][0] == 0){
@@ -18,6 +19,8 @@ int processAlias(char * alias){
 	while(aliastable[i][0] != 0){
 		if(strcmp(alias , aliastable[i][0]) == 0){
 			
+			alias_caught = 1;
+
 			//Remove quotes from alias command
 			alias_cmd = aliastable[i][1];
 			for(int j = 0; j < strlen(alias_cmd) ; j++){

@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include "y.tab.h"
+#include "shell.h"
 %}
 
 FILEPATH	[A-Za-z0-9_/\-]
@@ -27,6 +28,9 @@ bye				return BYE;
 {WORD}+			{yylval.strval = strdup(yytext); return WORD;};
 {FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;};
 {COMMAND}		{yylval.strval = strdup(yytext); return COMMAND;};
+<<EOF>>			{if(alias_caught == 1){printf("\t Alias Caught in Flex\n");}
+				 else{yyterminate();}};
+					
 
 
 %%
