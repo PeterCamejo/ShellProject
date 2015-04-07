@@ -2,51 +2,10 @@
 #include <string.h>
 #include "shell.h"
 
+extern FILE * yyin;
 
 void yyerror ( const char *str) {fprintf ( stderr , "error: %s\n" , str);}
 int yywrap(){return 1;}
-
-int processAlias(char * alias){
-	char * alias_cmd;
-	alias_caught = 0;
-	int k = 0;
-
-	if(aliastable[0][0] == 0){
-		return 1;
-	}
-
-	int i = 0;
-	while(aliastable[i][0] != 0){
-		if(strcmp(alias , aliastable[i][0]) == 0){
-			
-			alias_caught = 1;
-
-			//Remove quotes from alias command
-			alias_cmd = aliastable[i][1];
-			for(int j = 0; j < strlen(alias_cmd) ; j++){
-				if(alias_cmd[i] == '\\'){
-					alias_cmd[k++] = alias_cmd[j++];
-					alias_cmd[k++] = alias_cmd[j];
-
-					if(alias_cmd[j] == '\0'){
-						break;
-					}
-				}
-				else if (alias_cmd[j] != '"'){
-					alias_cmd[k++] = alias_cmd[j];
-				}
-			}
-			alias_cmd[k] = '\0';
-
-
-			//Input alias command through flex/bison again.
-			printf("\t Alias recognized : %s\n\t The command is %s\n" , aliastable[i][0] , alias_cmd);
-			return 0;
-		}
-		i++;
-	}
-	return 1;
-}
 
 
 %}
@@ -92,4 +51,4 @@ list_alias_case:
 unalias_case:
 		UN_ALIAS WORD 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
 word_case:
-		WORD			{if(processAlias(yylval.strval) == 1){ CMD = SYSERR;};return 0;};
+		WORD			{if(alias_caught == 0){ CMD = SYSERR;}; return 0;};

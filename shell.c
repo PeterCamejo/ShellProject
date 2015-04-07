@@ -202,7 +202,9 @@ int main(){
 	while(1){	
 		prompt();
 		CMD = 0;
+
 		getCommand();
+
 		switch(CMD){
 			case OK: 
 				if(builtin){
