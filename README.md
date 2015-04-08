@@ -11,7 +11,5 @@
 After "cd w/ filepath" command, prompt shifts right by one space.Does not affect functionality.
 This also happens with addalias.
 
-Inputting a valid alias into command line will currently cause segmentation fault.
-
 Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
 
