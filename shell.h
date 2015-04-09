@@ -31,4 +31,4 @@ int alias_caught;
 
 
 /* main function constructors */
-int processAlias(char * alias);
+char  processAlias(char * alias);

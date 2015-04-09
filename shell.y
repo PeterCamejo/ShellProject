@@ -17,9 +17,7 @@ int yywrap(){return 1;}
 	float floatval;
 }
 
-%token NUMBER HELLO BYE CD FILEPATH SPACE CDHOME PRINT_ENV ALIAS UN_ALIAS LIST_ALIAS WORD COMMAND
-%token <strval> SET_ENV
-
+%token NUMBER HELLO BYE CD FILEPATH SPACE CDHOME PRINT_ENV ALIAS UN_ALIAS LIST_ALIAS WORD COMMAND ALIASED SET_ENV
 %type <strval> setenv_case;
 
 
@@ -42,13 +40,13 @@ cd_home_case:
 setenv_case:
 		SET_ENV FILEPATH FILEPATH {CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3;return 0;};
 printenv_case:
-		PRINT_ENV 		{CMD = OK; builtin = 1; command = PRINTENV; return 0;};
+		PRINT_ENV 	{printf("\t MATCHED 1 \n"); CMD = OK; builtin = 1; command = PRINTENV; return 0;};
 add_alias_case:
-		ALIAS WORD COMMAND      {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
+		ALIAS WORD COMMAND       {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
 
 list_alias_case:
-		LIST_ALIAS 		{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
+		LIST_ALIAS	{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
 		UN_ALIAS WORD 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
 word_case:
-		WORD			{if(alias_caught == 0){ CMD = SYSERR;}; return 0;};
+		WORD			{if(alias_caught == 0){ CMD = SYSERR;} return 0;};

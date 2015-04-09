@@ -1,17 +1,15 @@
 * Working Features:
 
-(1) All Builtin Functions
+(1) All Builtin Functions 
 
 * Features that require further testing:
 
-(1) Aliases in general should be more thoroughly tested.
+(1) Alias processing
 
 *	Current Bugs:
 
-After "cd w/ filepath" command, prompt shifts right by one space.Does not affect functionality.
-This also happens with addalias.
 
-Inputting a valid alias into command line will currently cause segmentation fault.
+Alias processing does not expand other aliases
 
 Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
 

@@ -190,6 +190,9 @@ void prompt(){
 
 int getCommand(){
 	yyparse();
+	if(alias_caught == 1){
+		reflex(alias_command);
+	}
 	return 0;
 }
 
@@ -202,6 +205,7 @@ int main(){
 	while(1){	
 		prompt();
 		CMD = 0;
+		alias_caught = 0;
 
 		getCommand();
 
@@ -220,6 +224,7 @@ int main(){
 				exit(0);
 			case SYSERR:
 				printf("\t Nonvalid command\n");
+				break;
 				//	recover();
 		}
 
