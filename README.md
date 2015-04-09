@@ -10,5 +10,6 @@
 
 Processing a nested set of aliases produces a funny character on the next prompt() in the command line. Does not affect functionality.
 
+
 Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
 
