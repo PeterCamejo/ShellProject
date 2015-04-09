@@ -1,6 +1,6 @@
 * Working Features:
 
-(1) All Builtin Functions 
+(1) All Builtin Functions (2)Aliases/Alias Processing
 
 * Features that require further testing:
 
@@ -8,11 +8,7 @@
 
 *	Current Bugs:
 
+Processing a nested set of aliases produces a funny character on the next prompt() in the command line. Does not affect functionality.
 
-<<<<<<< HEAD
-Alias processing does not expand other aliases
-
-=======
->>>>>>> a155b88039ef584cb3b7071c114dfc1c811d16f3
 Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
 

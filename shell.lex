@@ -17,11 +17,11 @@ COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 unalias			return UN_ALIAS;
 alias 			return ALIAS;
 alias\n         return LIST_ALIAS;
-printenv		{printf("\t MATCHED \n");return PRINT_ENV;};
+printenv		return PRINT_ENV;
 cd				return CD;
 cd\n 			return CDHOME;
 setenv			return SET_ENV;
-[0-9]+			{printf("\t Number matched \n");return NUMBER;};
+[0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
 \n 				/* ignore newline */
@@ -30,8 +30,9 @@ bye				return BYE;
 					yylval.strval = strdup(yytext); 
 					char * text = yylval.strval;
 					
+					//If the word is found to be an alias
 					if(isAlias(text) == 1){
-						alias_caught = 1;
+						alias_caught = 1;  //signal alias catch
 						char * alias_cmd;
 						int len  = 0;
 						int i = 0;
@@ -50,9 +51,9 @@ bye				return BYE;
 									final_cmd[j] = alias_cmd[j+1];
 								}
 
-								final_cmd[len-2] = '\0';
+								final_cmd[len-2] = '\0';  //Add NULL pointer.
 
-								alias_command = final_cmd;						
+								alias_command = final_cmd; //Set alias command as the final, processed command.						
 							}
 
 							i++;
@@ -106,6 +107,7 @@ int isAlias(char * alias){
 
 
 void reflex(char * alias_cmd){
+	alias_caught = 0; //reset alias catching for nested alias use.
 
 	int length = strlen(alias_cmd);
 	char newbuffer[length+2];

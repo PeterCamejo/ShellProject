@@ -190,7 +190,8 @@ void prompt(){
 
 int getCommand(){
 	yyparse();
-	if(alias_caught == 1){
+
+	while(alias_caught == 1){
 		reflex(alias_command);
 	}
 	return 0;
