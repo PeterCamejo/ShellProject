@@ -16,15 +16,13 @@ COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 unalias			return UN_ALIAS;
 alias 			return ALIAS;
-alias\n         return LIST_ALIAS;
 printenv		return PRINT_ENV;
 cd				return CD;
-cd\n 			return CDHOME;
 setenv			return SET_ENV;
 [0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
-\n 				/* ignore newline */
+\n 				return NEWLINE;
 [:space:]		return SPACE;
 {WORD}+			{
 					yylval.strval = strdup(yytext); 
@@ -37,10 +35,11 @@ bye				return BYE;
 						int len  = 0;
 						int i = 0;
 
-						while(aliastable[i][0] != 0){
+						while(aliastable[i][0] != 0){	//traverse alias table
 							
-							if(strcmp(text , aliastable[i][0]) == 0){
+							if(strcmp(text , aliastable[i][0]) == 0){  //if word matched to alias
 								
+								alias_name  = text;
 
 								//Remove quotes from alias command
 								alias_cmd = aliastable[i][1];

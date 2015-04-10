@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 void shell_init(){
+	alias_loop = 0;
 	return;
 }
 
@@ -192,8 +193,19 @@ int getCommand(){
 	yyparse();
 
 	while(alias_caught == 1){
-		reflex(alias_command);
+		if(alias_loop == 0){
+			start_alias = alias_name;
+			alias_loop = 1;
+		}
+		if(strcmp(alias_command , start_alias)== 0){
+			printf("\t Error: Infinite alias loop detected. Aborting...\n");
+			break;
+		}else{
+			reflex(alias_command);
+		}
 	}
+
+	alias_loop = 0;
 	return 0;
 }
 

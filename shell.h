@@ -25,7 +25,9 @@ char * cd_filepath; 				//Filepath that cd is changing into.
 char * envvar; 						// Environmental Variable for setenv()
 char * envvar_value; 				// Value to set envvar to.
 char * aliastable[MAX_ALIASES][2];	//50 possible aliases with 1 definition each.
-char * alias_name;					
+char * start_alias;
+int alias_loop;
+char*  alias_name;				
 char * alias_command;
 int alias_caught;
 
