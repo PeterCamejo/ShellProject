@@ -18,7 +18,7 @@ int yywrap(){return 1;}
 }
 
 %token NUMBER HELLO BYE CD FILEPATH SPACE PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE
-%type <strval> setenv_case;
+
 
 
 %%
@@ -37,7 +37,7 @@ cd_case:
 		|CD WORD NEWLINE  {CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
 		|CD NEWLINE		  {CMD = OK; builtin = 1; command = CDH; return 0;};
 setenv_case:
-		SET_ENV FILEPATH FILEPATH NEWLINE{CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3;return 0;};
+		SET_ENV WORD WORD NEWLINE{CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3;return 0;};
 printenv_case:
 		PRINT_ENV NEWLINE 	{CMD = OK; builtin = 1; command = PRINTENV; return 0;};
 add_alias_case:
@@ -46,6 +46,6 @@ add_alias_case:
 unalias_case:
 		UN_ALIAS WORD NEWLINE 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
 word_case:
-		WORD NEWLINE			{if(alias_caught == 0){ CMD = SYSERR;} return 0;};
+		WORD NEWLINE			{if(alias_caught == 0 && expanding == 0){ CMD = SYSERR;} return 0;};
 no_command_case:
 		NEWLINE					{return 0;};

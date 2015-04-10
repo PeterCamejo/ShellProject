@@ -30,6 +30,9 @@ int alias_loop;
 char*  alias_name;				
 char * alias_command;
 int alias_caught;
+int expanding; 						//Signals FLEX on if a word is an expansion attempt.
+
+extern char ** environ; // Holds local UNIX Environmental Variables.
 
 
 /* main function constructors */

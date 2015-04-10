@@ -9,6 +9,7 @@ void shell_init(){
 
 /* changes directory when CD+filepath command recieved */
 void changedir(char * directory){
+
 	if(chdir(directory) == -1){
 		printf("\t %s is not a directory\n" , directory);
 	}
@@ -79,7 +80,7 @@ int unalias(char * alias_name){
 void do_it(){
 	switch(command){
 		/* environ and i for use in printenv (Cant declare variables inside cases) */
-		extern char ** environ; // Holds local UNIX Environmental Variables.
+		
 		int i = 0;
 
 		case CDX :  // CD with a directory specified.

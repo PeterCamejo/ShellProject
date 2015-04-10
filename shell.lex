@@ -8,7 +8,7 @@
 %}
 
 FILEPATH	[A-Za-z0-9_/\-]
-WORD		[A-Za-z0-9]
+WORD		[A-Za-z0-9{}$_/\-]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 
@@ -27,12 +27,12 @@ bye				return BYE;
 {WORD}+			{
 					yylval.strval = strdup(yytext); 
 					char * text = yylval.strval;
+					int length = strlen(text);
 					
 					//If the word is found to be an alias
 					if(isAlias(text) == 1){
 						alias_caught = 1;  //signal alias catch
 						char * alias_cmd;
-						int len  = 0;
 						int i = 0;
 
 						while(aliastable[i][0] != 0){	//traverse alias table
@@ -43,14 +43,14 @@ bye				return BYE;
 
 								//Remove quotes from alias command
 								alias_cmd = aliastable[i][1];
-								len = strlen(alias_cmd);
-								char final_cmd[len-1];
+								length = strlen(alias_cmd);
+								char final_cmd[length-1];
 
-								for(int j = 0; j < len-2 ; ++j){
+								for(int j = 0; j < length-2 ; ++j){
 									final_cmd[j] = alias_cmd[j+1];
 								}
 
-								final_cmd[len-2] = '\0';  //Add NULL pointer.
+								final_cmd[length-2] = '\0';  //Add NULL pointer.
 
 								alias_command = final_cmd; //Set alias command as the final, processed command.						
 							}
@@ -59,7 +59,29 @@ bye				return BYE;
 						}
 						return WORD;
 					}
+					else if(text[0] == '$' && text[1] == '{'){
+						expanding = 1;
+						char * env_name = malloc(sizeof(text));
+						char * env_value;
+
+						for(int i = 2; i < length; i++ ){					
+							if(text[i+1] == '}'){					
+								strncpy(env_name , text+2 , i-1);
+								strcat(env_name , "\0");
+								break;
+							}
+						}
+						env_value = getenv(env_name);
+						if(env_value == NULL){
+							printf("\tError: Not a valid Environmental Variable name \n");
+						}
+						else{
+							yylval.strval = env_value;
+						}
+						return WORD;
+					}
 					else{
+						expanding = 0;
 						alias_caught = 0;
 						return WORD;
 					}
