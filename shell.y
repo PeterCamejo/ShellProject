@@ -4,7 +4,6 @@
 #include "shell.h"
 
 
-
 void yyerror ( const char *str) { if(alias_caught != 1 && unaliasing != 1)fprintf ( stderr , "\t ERROR: %s\n" , str);}
 int yywrap(){return 1;}
 
@@ -16,6 +15,7 @@ int yywrap(){return 1;}
 	int intval;
 	char *strval;
 	float floatval;
+	void * linklist 
 }
 
 %token NUMBER HELLO BYE CD FILEPATH PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE AMPER GT GT2 LT PIPE ESCAPE
@@ -23,7 +23,7 @@ int yywrap(){return 1;}
 %left CD WORD ALIAS
 
 %type <strval> args
-%type <linklist> arglist;
+%type <linklist> arglist
 %type <linklist> cm
 
 %%
@@ -32,7 +32,7 @@ commands: /*empty */
 		| commands command;
 
 command:
-		NEWLINE { /*Ignore */} |hello_case NEWLINE|bye_case NEWLINE|cd_case NEWLINE|setenv_case NEWLINE|printenv_case NEWLINE|add_alias_case NEWLINE|unalias_case NEWLINE;
+		NEWLINE { /*Ignore */} |hello_case NEWLINE|bye_case NEWLINE|cd_case NEWLINE|setenv_case NEWLINE|printenv_case NEWLINE|add_alias_case NEWLINE|unalias_case NEWLINE|final_command NEWLINE;
 hello_case:
 		HELLO 		{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
 bye_case:
@@ -65,17 +65,17 @@ final_command:
 		cm{
 			int wait;
 			com * currcmd = $1;
-			pid_t proccess_id;
+			pid_t process_id;
+
 			while(currcmd){
 				switch(process_id = fork()){
 					case 0:
 						switch(determinePlace(currcmd)){ //Determine if child (0) or not (0 > )
 							case ONLYONE:
 								in_redir(infile);
-								out_redit(outfile , appending);
-								CMD = OK;
-								builtin = 0;
-								current_command = currcmd;
+								out_redir(outfile , appending);
+								
+								execute(currcmd);
 								exit(0);
 							break;
 
@@ -86,13 +86,12 @@ final_command:
 								if(dup(currcmd->fd[FD_WRITE] != 1)){
 									printf("\t Error dup() current command's write fd in FIRST switch \n");
 								}
-								if(close(currcmd->next->[FD_READ] == -1)){
+								if(close(currcmd->next->fd[FD_READ] == -1)){
 									printf("\t Error closing next command's read fd in FIRST switch \n");
 								}
 								in_redir(infile);
-								CMD = OK;
-								builtin = 0;
-								current_command = currcmd;
+								
+								execute(currcmd);
 								exit(0);
 							break;
 
@@ -101,13 +100,12 @@ final_command:
 									printf("\t Error closing STDIN in LAST switch\n");
 								}
 								if(dup(currcmd->fd[FD_READ]) != 0){
-									printf(\t "Error dup() current command's read fd in LAST switch \n");
+									printf("\t Error dup() current command's read fd in LAST switch \n");
 								}
-								
+
 								out_redir(outfile , appending);
-								CMD = OK;
-								builtin = 0;
-								current_command = currcmd;
+								
+								execute(currcmd);
 								exit(0);
 							break;
 
@@ -121,9 +119,8 @@ final_command:
 								if(close(currcmd->next->fd[FD_READ]) == -1){
 									printf("\t ERROR closing next command's read fd in MIDDLE switch\n");
 								}
-								CMD = OK;
-								builtin = 0;
-								current_command = currcmd;
+								
+								execute(currcmd);
 								exit(0);
 							break;
 					    } // End whichCommand() switch

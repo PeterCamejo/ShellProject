@@ -44,6 +44,7 @@ typedef struct node{
 typedef struct linklist{
 	struct node * head;
 	struct node * tail;
+	int size;
 
 }linklist;
 
@@ -75,7 +76,7 @@ int expanding; 						//Signals FLEX on if a word is an expansion attempt.
 int unaliasing;
 
 char * infile;						// In File for IO redirection
-char * outfile; 					// Out File for IO Redirection
+char * outfile;		 				// Out File for IO Redirection
 int appending;						// Signals if a write will overwrite or append (when > or >> is used, respectively)
 
 com * current_command;

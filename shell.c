@@ -17,6 +17,7 @@ linklist * create_linklist(){
 	linklist * list = malloc(sizeof(linklist));
 	list->head = NULL;
 	list->tail = NULL;
+	list->size = 0;
 	return list;
 }
 
@@ -33,6 +34,8 @@ void linklist_insert(linklist * list , char * data){
 		list->tail->next = myNode;
 		list->tail = myNode;
 	}
+	list->size++;
+	return;
 }
 
 void linklist_remove(linklist * list , char * data){
@@ -44,6 +47,7 @@ void linklist_remove(linklist * list , char * data){
 			return;
 		}else{
 			list->head = list->head->next;
+			list->size--;
 			free(tmp);
 		}
 
@@ -52,6 +56,7 @@ void linklist_remove(linklist * list , char * data){
 		if(tmp->next->data == data){
 			node * deltmp = tmp->next->data;
 			tmp->next = tmp->next->next;
+			list->size--;
 			free(deltmp);
 			return;
 
@@ -79,6 +84,8 @@ void linklist_delete(linklist * list){
 /*Initalizes shell variables */
 
 void shell_init(){
+	infile = NULL;
+	outfile = NULL;
 	alias_loop = 0;
 	return;
 }
@@ -260,7 +267,35 @@ void out_redir(char * outfile , int appending){
 	return;
 }
 
-void execute(){
+void execute(com * current_command){
+	char ** envp;
+	
+
+	linklist * commandlist = current_command->comargs;
+	int memsize = commandlist->size -1;
+	
+	char ** finalcom_args = malloc(sizeof(char*) * memsize);
+
+	node * tmp = commandlist->head;
+
+	for(int i = 0 ; i < memsize-1 ; i++){
+		finalcom_args[i] = tmp->data;
+		tmp = tmp->next;
+	}
+
+	char * finalcom = finalcom_args[0];
+
+	char path[300];
+
+	//if(finalcom[0] != '/'){ TODO: Add check to see if executable is a filename on path.
+	
+	if(execve(finalcom , finalcom_args , envp) == -1){
+		printf("\t Error executing command \n");
+	}
+
+
+	return;
+
 
 }
 
