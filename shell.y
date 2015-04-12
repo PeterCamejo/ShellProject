@@ -1,10 +1,11 @@
 %{#include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "shell.h"
 
 
 
-void yyerror ( const char *str) {fprintf ( stderr , "\t ERROR: %s\n" , str);}
+void yyerror ( const char *str) { if(alias_caught != 1 && unaliasing != 1)fprintf ( stderr , "\t ERROR: %s\n" , str);}
 int yywrap(){return 1;}
 
 
@@ -22,7 +23,8 @@ int yywrap(){return 1;}
 %left CD WORD ALIAS
 
 %type <strval> args
-
+%type <linklist> arglist;
+%type <linklist> cm
 
 %%
 
@@ -36,8 +38,8 @@ hello_case:
 bye_case:
 		BYE			{CMD = EXIT; return 0;};
 cd_case: 
-		CD 		  {CMD = OK; builtin = 1; command = CDH; return 0;};
-		|CD args   { CMD = OK; builtin = 1; command = CDX; cd_filepath = $<strval>2; return 0;};
+		CD 		  	{CMD = OK; builtin = 1; command = CDH; return 0;};
+		|CD args   	{CMD = OK; builtin = 1; command = CDX; cd_filepath = $<strval>2; return 0;};
 		
 setenv_case:
 		SET_ENV args args   {CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3; return 0;};
@@ -57,6 +59,45 @@ add_alias_case:
 		ALIAS args COMMAND       {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
 		|ALIAS 					 {CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
-		UN_ALIAS args			{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2; printf("\t %s\n" , alias_name);return 0; };
+		UN_ALIAS args			{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2; return 0; };
+cm:
+	cm LT WORD {
+				com * argcom = $1;
+				infile = $<strval>3;
+	}
+	|cm PIPE WORD{
+				com * com0 = $1;
+				com * com1 = $<strval>3;
+				com1->index =  com0->index+1;
+				com0->next = com1;
+
+				pipe(com1->fd);
+				$$ = $1;
+	}
+	|cm GT2 WORD{
+				com * argom = $1;
+				outfile = $<strval>3;
+				appending = 1;
+	}
+	|cm GT WORD{
+				com * argcom = $1;
+				outfile = $<strval>3;
+				appending = 0;
+	}
+	|arglist	{$$ = $1;};
+
+arglist:
+		args {
+			com * argcom = create_com();
+			linklist_insert(argcom->comargs , $1);
+			argcom->index = 0;
+			$$ = argcom;
+		}
+		|arglist args{
+					com * argcom = $1;
+					linklist_insert(argcom->comargs , $2);
+					$$ = $1;
+		};
+
 args:
 		WORD 					{$$ = $<strval>1;};

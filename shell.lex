@@ -14,7 +14,7 @@ COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 %%
 
-unalias			{unaliasing = 1; printf("\t Caught unalias\n");return UN_ALIAS;};
+unalias			{unaliasing = 1;return UN_ALIAS;};
 alias 			return ALIAS;
 printenv		return PRINT_ENV;
 cd				return CD;
@@ -147,7 +147,7 @@ void reflex(char * alias_cmd){
 	yy_scan_string(newbuffer);
 
 
-	if(yyparse()){
+	if(yyparse() && unaliasing != 1){
 		printf("\t Parsing error in reflex()\n");
 	}
 

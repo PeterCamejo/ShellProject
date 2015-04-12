@@ -42,6 +42,7 @@ int unaliasing;
 
 char * infile;						// In File for IO redirection
 char * outfile; 					// Out File for IO Redirection
+int appending;						// Signals if a write will overwrite or append (when > or >> is used, respectively)
 
 
 /*structs*/
@@ -62,7 +63,7 @@ typedef struct linklist{
 typedef struct com{
 	int infd;
 	int outfd;
-	int fd[2];
+	int fd[2];						//Holds filedes from pipe() syscall.
 	struct com * next; 				//points to next command;
 	linklist * comargs;
 	int index;				
