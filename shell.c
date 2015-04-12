@@ -9,10 +9,13 @@ void shell_init(){
 
 /* changes directory when CD+filepath command recieved */
 void changedir(char * directory){
-
 	if(chdir(directory) == -1){
 		printf("\t %s is not a directory\n" , directory);
 	}
+
+	char * pwd;
+	pwd = get_current_dir_name();
+	setenv("PWD" , pwd , 1);
 	return;
 }
 
@@ -56,6 +59,7 @@ int unalias(char * alias_name){
 			found = 1;
 			break;
 		}
+		printf("%s != %s\n" , alias_name , aliastable[i][0]);
 		i++;
 	}
 	while(aliastable[i][0]!=NULL){
@@ -79,27 +83,22 @@ int unalias(char * alias_name){
 /* do_it() runs built in commands */
 void do_it(){
 	switch(command){
-		/* environ and i for use in printenv (Cant declare variables inside cases) */
-		
-		int i = 0;
 
+		int i = 0;
 		case CDX :  // CD with a directory specified.
 			changedir(cd_filepath);
 			break;
 		case CDH: 	// CD with no directory specified.
-			chdir(getenv("HOME"));
+			chdir(HOME);
+			setenv("PWD" , getenv("HOME") , 1);
 			break;
 		case SETENV:
 			if(setenv( envvar , envvar_value, 1) == -1){
-				printf("\t Error: Failed to set %s as %s\n", envvar , envvar_value);
-			}
-			break;
-		case PRINTENV:
-			while(environ[i]){
-				printf("%s\n" , environ[i++]);
+				printf("\t Error: Unable to set %s as %s\n" , envvar , envvar_value);
 			}
 			break;
 		case LISTALIAS:
+
 			while(aliastable[i][0]){
 				printf("%s\t", aliastable[i][0]);
 				printf("%s\n", aliastable[i++][1]);
@@ -116,6 +115,8 @@ void do_it(){
 			break;
 		
 	}
+
+	return;
 }
 
 /*
@@ -188,9 +189,20 @@ void prompt(){
 	printf("SHELL:%s$ " , curdir);
 	return;
 }
-
+void init_scanner_and_parser(){
+	unaliasing = 0;
+	alias_caught = 0;
+	expanding = 0;
+	builtin = 0;
+	command = 0;
+	CMD = 0;
+	return;
+}
 
 int getCommand(){
+	
+	init_scanner_and_parser();
+
 	yyparse();
 
 	while(alias_caught == 1){
@@ -216,13 +228,9 @@ int main(){
 	shell_init();   // What is the point in this...?
 
 	/* Shell Loop */
-	while(1){	
+	while(1){
 		prompt();
-		CMD = 0;
-		alias_caught = 0;
-
 		getCommand();
-
 		switch(CMD){
 			case OK: 
 				if(builtin){

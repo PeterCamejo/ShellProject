@@ -2,9 +2,9 @@
 #include <string.h>
 #include "shell.h"
 
-extern FILE * yyin;
 
-void yyerror ( const char *str) {fprintf ( stderr , "error: %s\n" , str);}
+
+void yyerror ( const char *str) {fprintf ( stderr , "\t ERROR: %s\n" , str);}
 int yywrap(){return 1;}
 
 
@@ -17,8 +17,11 @@ int yywrap(){return 1;}
 	float floatval;
 }
 
-%token NUMBER HELLO BYE CD FILEPATH SPACE PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE
+%token NUMBER HELLO BYE CD FILEPATH PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE AMPER GT GT2 LT PIPE ESCAPE
 
+%left CD WORD ALIAS
+
+%type <strval> args
 
 
 %%
@@ -27,25 +30,33 @@ commands: /*empty */
 		| commands command;
 
 command:
-		hello_case|bye_case|cd_case|setenv_case|printenv_case|add_alias_case|unalias_case|word_case|no_command_case;
+		NEWLINE { /*Ignore */} |hello_case NEWLINE|bye_case NEWLINE|cd_case NEWLINE|setenv_case NEWLINE|printenv_case NEWLINE|add_alias_case NEWLINE|unalias_case NEWLINE;
 hello_case:
-		HELLO NEWLINE 			{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
+		HELLO 		{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
 bye_case:
-		BYE NEWLINE			{CMD = EXIT; return 0;};
+		BYE			{CMD = EXIT; return 0;};
 cd_case: 
-		CD FILEPATH NEWLINE	{CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;}
-		|CD WORD NEWLINE  {CMD = OK; builtin = 1; command = CDX; cd_filepath = yylval.strval ; return 0;};
-		|CD NEWLINE		  {CMD = OK; builtin = 1; command = CDH; return 0;};
+		CD 		  {CMD = OK; builtin = 1; command = CDH; return 0;};
+		|CD args   { CMD = OK; builtin = 1; command = CDX; cd_filepath = $<strval>2; return 0;};
+		
 setenv_case:
-		SET_ENV WORD WORD NEWLINE{CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3;return 0;};
+		SET_ENV args args   {CMD = OK; builtin = 1; command = SETENV; envvar = $<strval>2; envvar_value = $<strval>3; return 0;};
+
 printenv_case:
-		PRINT_ENV NEWLINE 	{CMD = OK; builtin = 1; command = PRINTENV; return 0;};
+		PRINT_ENV  	
+		{
+			extern char ** environ; // Holds local UNIX Environmental Variables.
+			int i = 0;
+			while(environ[i]){
+				printf("%s\n" , environ[i]);
+				i++;
+			}
+			return 0;
+		};
 add_alias_case:
-		ALIAS WORD COMMAND NEWLINE      {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
-		|ALIAS NEWLINE				{CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
+		ALIAS args COMMAND       {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
+		|ALIAS 					 {CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
-		UN_ALIAS WORD NEWLINE 	{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2;return 0; };
-word_case:
-		WORD NEWLINE			{if(alias_caught == 0 && expanding == 0){ CMD = SYSERR;} return 0;};
-no_command_case:
-		NEWLINE					{return 0;};
+		UN_ALIAS args			{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2; printf("\t %s\n" , alias_name);return 0; };
+args:
+		WORD 					{$$ = $<strval>1;};

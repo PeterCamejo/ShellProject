@@ -7,30 +7,33 @@
 #include "shell.h"
 %}
 
-FILEPATH	[A-Za-z0-9_/\-]
+
 WORD		[A-Za-z0-9{}$_/\-]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 
 %%
 
-unalias			return UN_ALIAS;
+unalias			{unaliasing = 1; printf("\t Caught unalias\n");return UN_ALIAS;};
 alias 			return ALIAS;
 printenv		return PRINT_ENV;
 cd				return CD;
 setenv			return SET_ENV;
-[0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
-\n 				return NEWLINE;
-[:space:]		return SPACE;
+&				return AMPER;
+\\[^n]			{yylval.strval = strdup(yytext); return ESCAPE;};
+\<				return LT;
+\>\>			return GT2;
+\>				return GT;
+\|				return PIPE;
 {WORD}+			{
 					yylval.strval = strdup(yytext); 
 					char * text = yylval.strval;
 					int length = strlen(text);
 					
 					//If the word is found to be an alias
-					if(isAlias(text) == 1){
+					if(isAlias(text) == 1 && unaliasing != 1){
 						alias_caught = 1;  //signal alias catch
 						char * alias_cmd;
 						int i = 0;
@@ -81,8 +84,8 @@ bye				return BYE;
 						return WORD;
 					}
 					else{
-						expanding = 0;
-						alias_caught = 0;
+												
+						yylval.strval =strdup(yytext);
 						return WORD;
 					}
 
@@ -91,8 +94,8 @@ bye				return BYE;
 
 
 
-{FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;};
 {COMMAND}		{yylval.strval = strdup(yytext); return COMMAND;};
+\n 				return NEWLINE;
 [ \t]+			/*ignore whitespace */
 
 <<EOF>>  {
