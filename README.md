@@ -1,16 +1,26 @@
 * Working Features:
 
-(1) All Builtin Functions (2)Aliases/Alias Processing (3) Environmental Variable Expansion
+      -All Builtin Functions 
+      
+      -Aliases/Alias Processing
+      
+      -Environmental Variable Expansion
 
-* Features that require further testing:
+* Features that do not work
 
-(1) Alias processing (2) Environmental Variable Expansion
+      -I/O Redirection
 
-*	Current Bugs:
+      -I/O Piping
+      
+      -External command handling
+      
+      -Wildcarding
+      
+      -Tilda expansion
+      
+      -Escape button handling
 
-Alias commands apparently cannot have spaces or consist of a single character.
+*Current Bugs:
 
-Unalias will execute the alias it is unaliasing, but will successfully unalias.
-
-Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
+      -None apparent
 
