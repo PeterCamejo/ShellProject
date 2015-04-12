@@ -55,13 +55,17 @@ bye				return BYE;
 
 								final_cmd[length-2] = '\0';  //Add NULL pointer.
 
-								alias_command = final_cmd; //Set alias command as the final, processed command.						
+								alias_command = final_cmd; //Set alias command as the final, processed command.
+								yylval.strval = strdup(final_cmd);
+								break;			
 							}
 
 							i++;
 						}
 						return WORD;
 					}
+
+					// If word is found to be environ variable expansion
 					else if(text[0] == '$' && text[1] == '{'){
 						expanding = 1;
 						char * env_name = malloc(sizeof(text));

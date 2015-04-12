@@ -1,6 +1,82 @@
 #include "shell.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <dirent.h>
+
+
+/* Struct Method Implmentation */
+com * create_com(){
+	com * comstruct = malloc(sizeof(com));
+	comstruct->next = NULL;
+	comstruct->comargs = create_linklist();
+	comstruct->index = -1;
+	return comstruct;
+}
+
+linklist * create_linklist(){
+	linklist * list = malloc(sizeof(linklist));
+	list->head = NULL;
+	list->tail = NULL;
+	return list;
+}
+
+void linklist_insert(linklist * list , char * data){
+	node * myNode = malloc(sizeof(node));
+	myNode->data = data;
+	myNode->next = NULL;
+
+	if(list->head == NULL){ //If list is empty, put head and tail as new node.
+		list->head = myNode;
+		list->tail = myNode;
+	}
+	else{
+		list->tail->next = myNode;
+		list->tail = myNode;
+	}
+}
+
+void linklist_remove(linklist * list , char * data){
+	node * tmp = list->head;
+
+	if(list->head->data == data){
+		if(list->head->next == NULL){
+			linklist_delete(list);
+			return;
+		}else{
+			list->head = list->head->next;
+			free(tmp);
+		}
+
+	}
+	while(tmp->next != NULL){
+		if(tmp->next->data == data){
+			node * deltmp = tmp->next->data;
+			tmp->next = tmp->next->next;
+			free(deltmp);
+			return;
+
+		}
+		tmp = tmp->next;
+	}
+
+	printf("\t Error: Value not found in list\n");
+	return;
+
+}
+
+void linklist_delete(linklist * list){
+	node * tmp = list->head;
+	node * nexttmp;
+	while(tmp->next!=NULL){
+		nexttmp = tmp->next;
+		free(tmp);
+		tmp = nexttmp;
+	}
+
+	free(list);
+}
+
+/*Initalizes shell variables */
 
 void shell_init(){
 	alias_loop = 0;
@@ -117,6 +193,24 @@ void do_it(){
 	}
 
 	return;
+}
+
+int executable(char * filename , char * filepath){
+	struct dirent * diren;
+	DIR * directory_stream;
+
+	directory_stream = opendir(filepath);
+
+	if(directory_stream != 0){
+		diren = readdir(directory_stream);
+		while(diren){
+			if(strcmp(diren->d_name, filename) == 0){
+				return 1;
+			}
+		}
+	}
+
+	return 0;
 }
 
 /*
