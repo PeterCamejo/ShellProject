@@ -7,7 +7,7 @@
       -Environmental Variable Expansion
 
 * Features that do not work
-* 
+
       -I/O Redirection
 
       -I/O Piping
