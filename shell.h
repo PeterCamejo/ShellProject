@@ -1,3 +1,6 @@
+#include <sys/stat.h>
+#include <fcntl.h>
+
 /* Definitions */
 #define MAX_ALIASES 50
 
@@ -23,6 +26,37 @@
 #define STDIN 0
 #define STDOUT 1
 
+// Piping macros
+#define FIRST 0
+#define MIDDLE 1
+#define LAST 2
+#define ONLYONE 3
+#define FD_READ 0
+#define FD_WRITE 1
+
+
+/*structs*/
+typedef struct node{
+	char * data;
+	struct node * next;
+} node;
+
+typedef struct linklist{
+	struct node * head;
+	struct node * tail;
+
+}linklist;
+
+typedef struct com{
+	int infd;
+	int outfd;
+	int fd[2];						//Holds filedes from pipe() syscall.
+	struct com * next; 				//points to next command;
+	linklist * comargs;
+	int index;				
+
+} com;
+
 
 /* Globals */
 int builtin;  						//Determines if command is built in or not
@@ -44,31 +78,8 @@ char * infile;						// In File for IO redirection
 char * outfile; 					// Out File for IO Redirection
 int appending;						// Signals if a write will overwrite or append (when > or >> is used, respectively)
 
+com * current_command;
 
-/*structs*/
-
-
-
-typedef struct node{
-	char * data;
-	struct node * next;
-} node;
-
-typedef struct linklist{
-	struct node * head;
-	struct node * tail;
-
-}linklist;
-
-typedef struct com{
-	int infd;
-	int outfd;
-	int fd[2];						//Holds filedes from pipe() syscall.
-	struct com * next; 				//points to next command;
-	linklist * comargs;
-	int index;				
-
-} com;
 
 /* struct methods */
 

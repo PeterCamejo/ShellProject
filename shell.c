@@ -213,69 +213,60 @@ int executable(char * filename , char * filepath){
 	return 0;
 }
 
-/*
+int determinePlace(com * comargs){
+	if(comargs->next == NULL && comargs->index != 0){
+		return ONLYONE;
+	}
+
+	if(comargs->next == NULL && comargs->index == 0){
+		return LAST;
+	}
+	if(comargs->next != NULL && comargs->index != 0){
+		return MIDDLE;
+	}
+	if(comargs->next != NULL && comargs->index == 0){
+		return FIRST;
+	}
+}
+
+void in_redir(char * infile){
+	int fd = open(infile, O_RDONLY);
+	if(fd == -1){
+		printf("\tError Opening file in in_redir()\n");
+		exit(1);
+	}
+	close(STDIN);
+	dup(fd);
+	close(fd);
+	return;
+}
+
+void out_redir(char * outfile , int appending){
+	int fd;
+	if(appending){
+		fd = open(outfile , O_WRONLY | O_CREAT | O_APPEND );
+	}
+	else{
+		fd = open(outfile , O_WRONLY| O_CREAT );
+	}
+
+	if(fd == -1){
+		printf("\t Error opening file in out_redir()\n");
+		exit(1);
+	}
+	close(STDOUT);
+	dup(fd);
+	close(fd);
+	return;
+}
+
 void execute(){
-//Check to see if command is accessible and executable
-	if(! executable()){
-		printf("\t Command not Found\n"); //not accessible
-		return;
-	}
 
-//Check IO file existence in the event of io-reduction.
-	if( check_in_file() == SYSERR){
-		printf("Can't read from: %s, srcf"); //not accessible
-		return;
-	}
-	if( check_out_file() == SYSERR){
-		printf("Can't write to: %s, destf"); //not accessible
-		return;
-	}
-
-	//Build Up the PipeLine
-	for(c=0; c < currcmd; c++){
-		//Prepare arguments
-		if(..){
-			//Argv
-		}
-		else{
-			//the case of a command with no arguments
-		}
-
-		switch( pid = fork() ) { //Fork process return twice
-
-			case 0:
-				switch(WhichComm(c)){
-					case FIRST:
-					if( close(1) = SYSCALLER) {...}
-					if( dup(comtab[c].outfd) != 1) {...}
-					if( close(comtab[c+1].infd) == SYSCALLER){...}
-					in_redir();
-					break;
-
-					case LAST:
-						if( close(0) == SYSCALLER){...}
-						if( dup(comtab[c].infd) != 0) {...}
-						out_redir();
-						break;
-
-					case THE_ONLY_ONE:
-						in_redir();
-						out_redir();
-						break;
-
-					default:
-					if( dup2(comtab[c].outfd,1) == SYSCALLER) {...}
-					if( dup2(comtab[c].infd, 0) == SYSCALLER) {...}
-					if( close(comtab[c+1].infd) == SYSCALLER) {...}
-					break;
-				}
-		}
-	}
 }
 
 
 
-*/
+
 
 /* Prompts shell input each line */
 void prompt(){
@@ -331,7 +322,8 @@ int main(){
 					do_it();
 				}
 				else{
-					//execute();
+					//execute(current_command);
+					//current_command = NULL;
 				};
 				
 				break;
