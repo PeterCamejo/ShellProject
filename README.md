@@ -1,10 +1,4 @@
-* Working Features:
-
-      -All Builtin Functions 
-      
-      -Aliases/Alias Processing
-      
-      -Environmental Variable Expansion
+/* IO REDIRECTION DOES NOT WORK */
 
 * Features that do not work
 
@@ -20,7 +14,14 @@
       
       -Escape button handling
 
-*Current Bugs:
+* Working Features:
 
-      -None apparent
+      -All Builtin Functions 
+      
+      -Aliases/Alias Processing
+      
+      -Environmental Variable Expansion
 
+* TODO:
+
+      -Organize fucntions and methods once functionality is complete.

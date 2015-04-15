@@ -142,7 +142,7 @@ int unalias(char * alias_name){
 			found = 1;
 			break;
 		}
-		printf("%s != %s\n" , alias_name , aliastable[i][0]);
+		
 		i++;
 	}
 	while(aliastable[i][0]!=NULL){
@@ -160,6 +160,8 @@ int unalias(char * alias_name){
 		printf("\t Error: %s alias not found.\n" , alias_name);
 		return 1;
 	}
+
+
 		
 }
 
@@ -196,9 +198,46 @@ void do_it(){
 		case UNALIAS:
 			unalias(alias_name);
 			break;
+		case LS:
+			if(ls_filepath){
+				lsfilepath(ls_filepath);
+			}
+			else{
+				ls();
+			}
+			break;
 		
 	}
 
+	return;
+}
+void ls(){
+	struct dirent * directory;
+	DIR * direct_stream = opendir(getenv("PWD"));
+	if(direct_stream != 0){
+		
+		while((directory = readdir(direct_stream)) != NULL){
+			printf("\t %s" , directory->d_name);
+		}
+		printf("\n");
+	}
+
+	closedir(direct_stream);
+	return;
+
+}
+
+void lsfilepath(char * filepath){
+	struct dirent * directory;
+	DIR * direct_stream = opendir(filepath);
+	if(direct_stream != 0){
+		while((directory = readdir(direct_stream)) != NULL){
+			printf("\t %s" , directory->d_name);
+		}
+		printf("\n");
+	}
+
+	closedir(direct_stream);
 	return;
 }
 
@@ -222,11 +261,11 @@ int executable(char * filename , char * filepath){
 
 int determinePlace(com * comargs){
 	if(comargs->next == NULL && comargs->index != 0){
-		return ONLYONE;
+		return LAST;
 	}
 
 	if(comargs->next == NULL && comargs->index == 0){
-		return LAST;
+		return ONLYONE;
 	}
 	if(comargs->next != NULL && comargs->index != 0){
 		return MIDDLE;
@@ -237,48 +276,73 @@ int determinePlace(com * comargs){
 }
 
 void in_redir(char * infile){
-	int fd = open(infile, O_RDONLY);
-	if(fd == -1){
-		printf("\tError Opening file in in_redir()\n");
-		exit(1);
+	if(infile){
+		int fd;
+		fd =  open(infile, O_RDONLY);
+		if(fd == -1){
+			printf("\tError Opening file %s in in_redir()\n" , infile);
+			exit(1);
+		}
+		close(STDIN);
+		dup(fd);
+		close(fd);
 	}
-	close(STDIN);
-	dup(fd);
-	close(fd);
 	return;
 }
 
 void out_redir(char * outfile , int appending){
-	int fd;
-	if(appending){
-		fd = open(outfile , O_WRONLY | O_CREAT | O_APPEND );
-	}
-	else{
-		fd = open(outfile , O_WRONLY| O_CREAT );
-	}
+	if(outfile){
+		int fd;
+		if(appending){
+			fd = open(outfile , O_WRONLY | O_CREAT | O_APPEND );
+		}
+		else{
+			fd = open(outfile , O_WRONLY| O_CREAT );
+		}
 
-	if(fd == -1){
-		printf("\t Error opening file in out_redir()\n");
-		exit(1);
+		if(fd == -1){
+			printf("\t Error opening file in out_redir()\n");
+			exit(1);
+		}
+		close(STDOUT);
+		dup(fd);
+		close(fd);
 	}
-	close(STDOUT);
-	dup(fd);
-	close(fd);
 	return;
 }
 
 void execute(com * current_command){
-	char ** envp;
-	
+	char ** envp = {NULL};
+	builtin = 0;
 
 	linklist * commandlist = current_command->comargs;
-	int memsize = commandlist->size -1;
-	
-	char ** finalcom_args = malloc(sizeof(char*) * memsize);
-
+	linklist * cl_copy = create_linklist();
+	int elenum = 1;
+	int count = 1;
 	node * tmp = commandlist->head;
+	
+	linklist_insert(cl_copy , tmp->data);
+	while(tmp->next!=NULL){
+		linklist_insert(cl_copy, tmp->next->data);
+		count++;
+		tmp = tmp->next;
+	}
 
-	for(int i = 0 ; i < memsize-1 ; i++){
+	tmp = commandlist->head;
+	node * tmp_cp = cl_copy->head;
+	for(int i = 0; i < count -1 ; i++){
+		elenum++;
+		tmp_cp = tmp_cp->next;
+	}
+
+	printf("\t count = %s while elenum = %s", count , elenum);
+
+	
+	char ** finalcom_args = malloc(sizeof(char*) * elenum+1);
+
+	
+
+	for(int i = 0 ; i < elenum ; i++){
 		finalcom_args[i] = tmp->data;
 		tmp = tmp->next;
 	}
@@ -291,6 +355,8 @@ void execute(com * current_command){
 	
 	if(execve(finalcom , finalcom_args , envp) == -1){
 		printf("\t Error executing command \n");
+		return;
+	
 	}
 
 
@@ -316,6 +382,9 @@ void init_scanner_and_parser(){
 	builtin = 0;
 	command = 0;
 	CMD = 0;
+	ls_filepath = NULL;
+	cd_filepath = NULL;
+	setenv("PWD" , get_current_dir_name());
 	return;
 }
 
@@ -359,9 +428,11 @@ int main(){
 				else{
 					//execute(current_command);
 					//current_command = NULL;
-				};
+				
 				
 				break;
+				}
+			break;
 			case EXIT:
 				printf("\t Exiting...\n");
 				exit(0);

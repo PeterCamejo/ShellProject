@@ -8,12 +8,13 @@
 %}
 
 
-WORD		[A-Za-z0-9{}$_/\-]
+WORD		[A-Za-z0-9{}$_/\-.]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 
 %%
 
+ls				return ELS;
 unalias			{unaliasing = 1;return UN_ALIAS;};
 alias 			return ALIAS;
 printenv		return PRINT_ENV;
@@ -35,6 +36,7 @@ bye				return BYE;
 					//If the word is found to be an alias
 					if(isAlias(text) == 1 && unaliasing != 1){
 						alias_caught = 1;  //signal alias catch
+						builtin = 1;
 						char * alias_cmd;
 						int i = 0;
 
@@ -56,7 +58,7 @@ bye				return BYE;
 								final_cmd[length-2] = '\0';  //Add NULL pointer.
 
 								alias_command = final_cmd; //Set alias command as the final, processed command.
-								yylval.strval = strdup(final_cmd);
+							
 								break;			
 							}
 

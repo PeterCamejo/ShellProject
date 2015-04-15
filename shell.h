@@ -18,6 +18,7 @@
 #define UNALIAS 6
 #define LISTALIAS 7
 #define	HELLOFRIEND 8  //Using to make sure shell is responding on startup. Can remove later.
+#define LS 9
 
 #define HOME getenv("HOME")
 #define PWD  getenv("PWD")
@@ -64,6 +65,7 @@ int builtin;  						//Determines if command is built in or not
 int command;  						//Current built in command.
 int CMD; 							// Determines if the command gained from getCommand() is OK, SYSERR, or BYE
 char * cd_filepath; 				//Filepath that cd is changing into.
+char * ls_filepath;					//Filepath that ls is searching.
 char * envvar; 						// Environmental Variable for setenv()
 char * envvar_value; 				// Value to set envvar to.
 char * aliastable[MAX_ALIASES][2];	//50 possible aliases with 1 definition each.

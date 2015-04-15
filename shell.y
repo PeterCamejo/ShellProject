@@ -18,9 +18,9 @@ int yywrap(){return 1;}
 	void * linklist 
 }
 
-%token NUMBER HELLO BYE CD FILEPATH PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE AMPER GT GT2 LT PIPE ESCAPE
+%token NUMBER HELLO BYE CD FILEPATH PRINT_ENV ALIAS UN_ALIAS WORD COMMAND SET_ENV NEWLINE AMPER GT GT2 LT PIPE ESCAPE ELS
 
-%left CD WORD ALIAS
+%left CD WORD ALIAS UN_ALIAS
 
 %type <strval> args
 %type <linklist> arglist
@@ -32,11 +32,14 @@ commands: /*empty */
 		| commands command;
 
 command:
-		NEWLINE { /*Ignore */} |hello_case NEWLINE|bye_case NEWLINE|cd_case NEWLINE|setenv_case NEWLINE|printenv_case NEWLINE|add_alias_case NEWLINE|unalias_case NEWLINE|final_command NEWLINE;
+		NEWLINE { /*Ignore */} |hello_case NEWLINE|ls_case NEWLINE|bye_case NEWLINE|cd_case NEWLINE|setenv_case NEWLINE|printenv_case NEWLINE|add_alias_case NEWLINE|unalias_case NEWLINE|final_command NEWLINE
 hello_case:
 		HELLO 		{CMD = OK; builtin = 1; command = HELLOFRIEND; return 0;};
 bye_case:
 		BYE			{CMD = EXIT; return 0;};
+ls_case:
+		ELS 			{CMD = OK; builtin = 1; command = LS; return 0;};
+		|ELS args    {CMD = OK; builtin = 1; command = LS; ls_filepath = $<strval>2 ; return 0;};
 cd_case: 
 		CD 		  	{CMD = OK; builtin = 1; command = CDH; return 0;};
 		|CD args   	{CMD = OK; builtin = 1; command = CDX; cd_filepath = $<strval>2; return 0;};
@@ -59,13 +62,15 @@ add_alias_case:
 		ALIAS args COMMAND       {CMD = OK ; builtin =1 ; command = ADDALIAS; alias_name = $<strval>2; alias_command = $<strval>3; return 0;};
 		|ALIAS 					 {CMD = OK; builtin = 1; command = LISTALIAS; return 0;};
 unalias_case:
-		UN_ALIAS args			{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2; return 0; };
+		UN_ALIAS WORD			{CMD = OK; builtin = 1; command = UNALIAS; alias_name = $<strval>2; return 0; };
 
 final_command:
 		cm{
+		
 			int wait;
 			com * currcmd = $1;
 			pid_t process_id;
+
 
 			while(currcmd){
 				switch(process_id = fork()){
@@ -140,11 +145,13 @@ final_command:
 			}
 			infile = NULL;		//reset file values;
 			outfile = NULL;
-		};
+		}
+
 cm:
 	cm LT WORD {
 				com * argcom = $1;
 				infile = $<strval>3;
+				printf("\t %s set as infile\n" , $<strval>3);
 	}
 	|cm PIPE WORD{
 				com * com0 = $1;
@@ -156,7 +163,7 @@ cm:
 				$$ = $1;
 	}
 	|cm GT2 WORD{
-				com * argom = $1;
+				com * argcom = $1;
 				outfile = $<strval>3;
 				appending = 1;
 	}
@@ -181,4 +188,4 @@ arglist:
 		};
 
 args:
-		WORD 					{$$ = $<strval>1;};
+		WORD 					{ if(isAlias($<strval>1)== 1 && unaliasing == 0){return 0;} else{$$ = $<strval>1;}};
