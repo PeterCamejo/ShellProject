@@ -212,12 +212,18 @@ void do_it(){
 	return;
 }
 void ls(){
+	int first = 0;
 	struct dirent * directory;
 	DIR * direct_stream = opendir(getenv("PWD"));
 	if(direct_stream != 0){
 		
 		while((directory = readdir(direct_stream)) != NULL){
-			printf("\t %s" , directory->d_name);
+			if(first == 0){
+				printf("%s" , directory->d_name);
+				first = 1;
+			}else{
+				printf("\t%s" , directory->d_name);
+			}
 		}
 		printf("\n");
 	}
@@ -228,11 +234,17 @@ void ls(){
 }
 
 void lsfilepath(char * filepath){
+	int first = 0;
 	struct dirent * directory;
 	DIR * direct_stream = opendir(filepath);
 	if(direct_stream != 0){
 		while((directory = readdir(direct_stream)) != NULL){
-			printf("\t %s" , directory->d_name);
+			if(first == 0){
+				printf("%s" , directory->d_name);
+				first = 1;
+			}else{
+				printf("\t %s" , directory->d_name);
+			}
 		}
 		printf("\n");
 	}

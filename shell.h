@@ -94,4 +94,25 @@ void linklist_delete(linklist * list);
 
 
 /* main function constructors */
-char  processAlias(char * alias);
+void  shell_init();
+void changedir(char * directory);
+int addalias(char * alias_name , char * alias_command);
+int unalias(char * alias_name);
+void do_it();
+void ls();
+void lsfilepath(char * filepath);
+int executable(char * filename , char * filepath);
+int determinePlace(com * comargs);
+void in_redir(char * infile);
+void out_redir(char * outfile , int appending);
+void execute(com * current_command);
+void prompt();
+void init_scanner_and_parser();
+int getCommand();
+
+
+
+
+
+
+
