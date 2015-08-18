@@ -1,28 +1,16 @@
-/* IO REDIRECTION DOES NOT WORK */
-
-* Features that do not work
-
-      -I/O Redirection
-
-      -I/O Piping
-      
-      -External command handling
-      
-      -Wildcarding
-      
-      -Tilda expansion
-      
-      -Escape button handling
-
 * Working Features:
 
-      -All Builtin Functions 
-      
-      -Aliases/Alias Processing
-      
-      -Environmental Variable Expansion
+(1) All Builtin Functions (2)Aliases/Alias Processing (3) Environmental Variable Expansion
 
-* TODO:
+* Features that require further testing:
 
-      -Organize fucntions and methods once functionality is complete.
-      
+(1) Alias processing (2) Environmental Variable Expansion
+
+*	Current Bugs:
+
+Alias commands apparently cannot have spaces or consist of a single character.
+
+Unalias will execute the alias it is unaliasing, but will successfully unalias.
+
+Printenv command before setenv causes segmentation fault. (Alex : I do not encounter this bug.)
+

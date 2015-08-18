@@ -7,36 +7,31 @@
 #include "shell.h"
 %}
 
-
-WORD		[A-Za-z0-9{}$_/\-.]
+FILEPATH	[A-Za-z0-9_/\-]
+WORD		[A-Za-z0-9{}$_/\-]
 COMMAND		\"[A-Za-z0-9<>|[:space:]_/\-]+\"
 
 
 %%
 
-ls				return ELS;
-unalias			{unaliasing = 1;return UN_ALIAS;};
+unalias			return UN_ALIAS;
 alias 			return ALIAS;
 printenv		return PRINT_ENV;
 cd				return CD;
 setenv			return SET_ENV;
+[0-9]+			return NUMBER;
 hello			return HELLO;
 bye				return BYE;
-&				return AMPER;
-\\[^n]			{yylval.strval = strdup(yytext); return ESCAPE;};
-\<				return LT;
-\>\>			return GT2;
-\>				return GT;
-\|				return PIPE;
+\n 				return NEWLINE;
+[:space:]		return SPACE;
 {WORD}+			{
 					yylval.strval = strdup(yytext); 
 					char * text = yylval.strval;
 					int length = strlen(text);
 					
 					//If the word is found to be an alias
-					if(isAlias(text) == 1 && unaliasing != 1){
+					if(isAlias(text) == 1){
 						alias_caught = 1;  //signal alias catch
-						builtin = 1;
 						char * alias_cmd;
 						int i = 0;
 
@@ -57,17 +52,13 @@ bye				return BYE;
 
 								final_cmd[length-2] = '\0';  //Add NULL pointer.
 
-								alias_command = final_cmd; //Set alias command as the final, processed command.
-							
-								break;			
+								alias_command = final_cmd; //Set alias command as the final, processed command.						
 							}
 
 							i++;
 						}
 						return WORD;
 					}
-
-					// If word is found to be environ variable expansion
 					else if(text[0] == '$' && text[1] == '{'){
 						expanding = 1;
 						char * env_name = malloc(sizeof(text));
@@ -90,8 +81,8 @@ bye				return BYE;
 						return WORD;
 					}
 					else{
-												
-						yylval.strval =strdup(yytext);
+						expanding = 0;
+						alias_caught = 0;
 						return WORD;
 					}
 
@@ -100,8 +91,8 @@ bye				return BYE;
 
 
 
+{FILEPATH}+		{yylval.strval = strdup(yytext); return FILEPATH;};
 {COMMAND}		{yylval.strval = strdup(yytext); return COMMAND;};
-\n 				return NEWLINE;
 [ \t]+			/*ignore whitespace */
 
 <<EOF>>  {
@@ -149,7 +140,7 @@ void reflex(char * alias_cmd){
 	yy_scan_string(newbuffer);
 
 
-	if(yyparse() && unaliasing != 1){
+	if(yyparse()){
 		printf("\t Parsing error in reflex()\n");
 	}
 
